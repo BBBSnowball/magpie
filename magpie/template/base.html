@@ -3,115 +3,198 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
       {% block title %}{% end block %} :: magpie
     </title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ static_url('style.css') }}" />
     <link rel="icon" type="image/jpeg" href="{{ static_url('magpie.jpg') }}" />
   </head>
   <body {% block bodytag %}{% end block %}>
-    <br>
-    <ul class="nav nav-tabs">
-      <li>
-        <a href="/config" class=config>
-          <span class="glyphicon glyphicon-wrench"></span>
-        </a>
-      </li>
-      <li>
-        <a href="/">
-          <span class="glyphicon glyphicon-home"></span>
-        </a>
-      </li>
-      <!-- new notebook button exposes new notebook form -->
-      <li>
-        <a href="#" onclick="$('#new_notebook_form').removeClass('hidden')">
-          + New Notebook +
-        </a>
-      </li>
-      <!-- hidden new notebook form -->
-      <li class="hidden" id="new_notebook_form">
-        <a href="#">
-          <input type="text" name="new_notebook_name" id="new_notebook_name" />
-          <input onclick="new_notebook(this);" type="button" class="btn btn-primary" value="Create" />
-          <input type="button" class="btn btn-danger" value="Cancel" onclick="uitoggler(this)" />
-        </a>
-      </li>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar-collapse">
+            Menu
+          </button>
+          <a class="navbar-brand" href="/">Magpie</a>
+        </div>
 
-      <!-- iterate though existing notebooks -->
-{% for notebook in notebooks %}
-  {% if notebook != '.git' %}
-        <li {% if notebook_name == notebook %}class="active"{% end if %}>
-          <a href="/{{ url_escape(notebook) }}">
-            {{ notebook }}
-          </a>
-        </li>
-  {% end if %}
-{% end for %}
-      </ul>
-      <br>
-      <div class="col-sm-2">
-        <ul class="nav nav-pills nav-stacked">
-        <!-- search -->
-        <li>
-          <form method="GET" action="/search">
+        <div class="collapse navbar-collapse" id="main-navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="/">
+                <span class="glyphicon glyphicon-home"></span>
+                Home
+              </a>
+            </li>
+
+            <li>
+              <a href="/config">
+                <span class="glyphicon glyphicon-wrench"></span>
+                Settings
+              </a>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-book"></span>
+                Notebooks
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+{% if len(notebooks) > 0 %}
+  {% for notebook in notebooks %}
+    {% if notebook != '.git' %}
+                <li {% if notebook_name == notebook %}class="active"{% end if %}>
+                  <a href="/{{ url_escape(notebook) }}">
+                    {{ notebook }}
+                  </a>
+                </li>
+    {% end if %}
+  {% end for %}
+                <li class="divider"></li>
+                <li>
+                  <a href="#" id="new_notebook_btn" class="visible-xs" onclick="$(this).parent().addClass('active');$('#new_notebook_form').removeClass('hidden')">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    New Notebook
+                  </a>
+                  <a href="#" class="hidden-xs" data-toggle="modal" data-target="#notebookModal">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    New Notebook
+                  </a>
+                </li>
+{% end if %}
+              </ul>
+            </li>
+          </ul>
+
+          <form class="navbar-form navbar-left hidden-sm hidden-md hidden-lg hidden" id="new_notebook_form">
             <div class="form-group">
-              <input type="search" name="q" id="search" size="15"
-              placeholder=" search" tabindex="10">
-              <button class="btn btn-link">
-                <span class="glyphicon glyphicon-search">
-                </span>
-              </button>
+              <label for="new_notebook_name" class="sr-only">New Notebook Name</label>
+              <input type="text" name="new_notebook_name" class="form-control" id="new_notebook_name" placeholder="Notebook Name">
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <button type="button" class="btn btn-block btn-danger" onclick="$('#new_notebook_btn').parent().removeClass('active');uitoggler(this);">Cancel</button>
+              </div>
+              <div class="col-xs-6">
+                <button type="button" class="btn btn-block btn-primary" onclick="new_notebook(this);">Create</button>
+              </div>
             </div>
           </form>
-        </li>
 
+          <form method="GET" action="/search" class="navbar-form navbar-right hidden-xs" role="search">
+            <div class="input-group">
+              <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+              </span>
+            </div>
+          </form>
+
+          <form method="GET" action="/search" class="navbar-form visible-xs" role="search">
+            <div class="form-group">
+              <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
+            </div>
+            <button type="submit" class="btn btn-block btn-primary">
+              <span class="glyphicon glyphicon-search"></span>
+              Search
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-4 col-md-3 col-lg-2">
 {% if notebook_name != u'' %}
-        <!-- new note button exposes new note form -->
-        <li>
-          <a href="#" onclick="$('#new_note_form').removeClass('hidden');">
-            + New Note +
-          </a>
-        </li>
-        <!-- hidden note form -->
-        <li class="hidden" id="new_note_form">
-          <a href="#">
-            <input type="text" name="new_note_name" id="new_note_name" />
-            <br><br>
-            <input type="button" class="btn btn-primary" value="Create" onclick="new_note(this);" />
-            <input type="button" class="btn btn-danger" value="Cancel" id="cancel" onclick="uitoggler(this);">
-          </a>
-        </li>
+            <!-- new note button exposes new note form -->
+            <div class="form-group">
+              <a href="#" class="btn btn-primary btn-block" id="new_note_btn" onclick="$(this).addClass('active');$('#new_note_form').removeClass('hidden');">
+                <span class="glyphicon glyphicon-plus"></span>
+                New Note
+              </a>
+            </div>
+            <!-- hidden note form -->
+            <form class="well hidden" id="new_note_form">
+              <div class="form-group">
+                <label for="new_note_name" class="sr-only">New Note Name</label>
+                <input type="text" name="new_note_name" class="form-control" id="new_note_name" placeholder="Note Name">
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-block btn-danger" onclick="$('#new_note_btn').removeClass('active');uitoggler(this);">Cancel</button>
+                </div>
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-block btn-primary" onclick="new_note(this);">Create</button>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+            </form>
 {% end if %}
 
+          <div class="list-group">
 {# iterate through existing notes #}
 {% for note in notes %}
-        <li {% if note == note_name %}class="active"{% end if %}>
-            <a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
-            {% if '%s/%s' % (notebook_name, note) in starred_notes %}
-              <span class='glyphicon glyphicon-star'></span>
-            {% else %}
-              <span class='glyphicon glyphicon-star-empty'></span>
-            {% end if %}
-            {{ note }}
-          </a>
-        </li>
+            <a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}" class="list-group-item {% if note == note_name %}active{% end if %}">
+              {% if '%s/%s' % (notebook_name, note) in starred_notes %}
+                <span class='glyphicon glyphicon-star'></span>
+              {% else %}
+                <span class='glyphicon glyphicon-star-empty'></span>
+              {% end if %}
+              {{ note }}
+            </a>
 {% end for %}
-      </ul>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-10">
+          </div>
+        </div>
+
+        <div class="col-sm-8 col-md-9 col-lg-10">
           {% block body %}
           {% end block %}
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="notebookModal" tabindex="-1" role="dialog" aria-labelledby="notebookModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="notebookModalLabel">New Notebook</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="new_notebook_name" class="sr-only">New Notebook Name</label>
+                <input type="text" name="new_notebook_name" class="form-control" id="new_notebook_name" placeholder="Notebook Name">
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-block btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-block btn-primary" onclick="new_notebook(this);">Create</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script>
       //helpers
       var uitoggler = function(self){
-        $(self).parents("li").first().addClass("hidden");
+        $(self).parents("form").first().addClass("hidden");
       };
       var new_notebook = function(self){
         var name = '/' + encodeURIComponent($("#new_notebook_name").val());

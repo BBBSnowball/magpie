@@ -1,0 +1,10 @@
+body {
+  overflow-x: hidden;
+}
+img {
+  max-width: 100%;
+}
+textarea {
+  max-width: 100%;
+  font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+}
