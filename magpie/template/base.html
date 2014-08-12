@@ -20,7 +20,7 @@
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar-collapse">
             Menu
           </button>
-          <a class="navbar-brand" href="/">Magpie</a>
+          <a class="navbar-brand" href="#">Magpie</a>
         </div>
 
         <div class="collapse navbar-collapse" id="main-navbar-collapse">
@@ -46,48 +46,29 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" role="menu">
-{% if len(notebooks) > 0 %}
-  {% for notebook in notebooks %}
-    {% if notebook != '.git' %}
+{% for notebook in notebooks %}
+  {% if notebook != '.git' %}
                 <li {% if notebook_name == notebook %}class="active"{% end if %}>
                   <a href="/{{ url_escape(notebook) }}">
                     {{ notebook }}
                   </a>
                 </li>
-    {% end if %}
-  {% end for %}
-                <li class="divider"></li>
-                <li>
-                  <a href="#" id="new_notebook_btn" class="visible-xs" onclick="$(this).parent().addClass('active');$('#new_notebook_form').removeClass('hidden')">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    New Notebook
-                  </a>
-                  <a href="#" class="hidden-xs" data-toggle="modal" data-target="#notebookModal">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    New Notebook
-                  </a>
-                </li>
-{% end if %}
+  {% end if %}
+{% end for %}
               </ul>
             </li>
           </ul>
 
-          <form class="navbar-form navbar-left hidden-sm hidden-md hidden-lg hidden" id="new_notebook_form">
-            <div class="form-group">
-              <label for="new_notebook_name" class="sr-only">New Notebook Name</label>
-              <input type="text" name="new_notebook_name" class="form-control" id="new_notebook_name" placeholder="Notebook Name">
-            </div>
-            <div class="row">
-              <div class="col-xs-6">
-                <button type="button" class="btn btn-block btn-danger" onclick="$('#new_notebook_btn').parent().removeClass('active');uitoggler(this);">Cancel</button>
-              </div>
-              <div class="col-xs-6">
-                <button type="button" class="btn btn-block btn-primary" onclick="new_notebook(this);">Create</button>
-              </div>
-            </div>
-          </form>
+          <button class="btn btn-primary btn-sm navbar-btn hidden-xs" data-toggle="modal" data-target="#notebookModal">
+            <span class="glyphicon glyphicon-plus"></span>
+            New Notebook
+          </button>
+          <button class="btn btn-primary btn-block navbar-btn visible-xs" data-toggle="modal" data-target="#notebookModal">
+            <span class="glyphicon glyphicon-plus"></span>
+            New Notebook
+          </button>
 
-          <form method="GET" action="/search" class="navbar-form navbar-right hidden-xs" role="search">
+          <form method="GET" action="/search" class="navbar-form navbar-right hidden-sm hidden-xs" role="search">
             <div class="input-group">
               <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
               <span class="input-group-btn">
@@ -97,16 +78,6 @@
               </span>
             </div>
           </form>
-
-          <form method="GET" action="/search" class="navbar-form visible-xs" role="search">
-            <div class="form-group">
-              <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
-            </div>
-            <button type="submit" class="btn btn-block btn-primary">
-              <span class="glyphicon glyphicon-search"></span>
-              Search
-            </button>
-          </form>
         </div>
       </div>
     </nav>
@@ -114,45 +85,61 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-4 col-md-3 col-lg-2">
-{% if notebook_name != u'' %}
-            <!-- new note button exposes new note form -->
+          <form method="GET" action="/search" class="visible-sm visible-xs" role="search">
             <div class="form-group">
-              <a href="#" class="btn btn-primary btn-block" id="new_note_btn" onclick="$(this).addClass('active');$('#new_note_form').removeClass('hidden');">
-                <span class="glyphicon glyphicon-plus"></span>
-                New Note
-              </a>
+              <div class="input-group">
+                <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-search"></span>
+                  </button>
+                </span>
+              </div>
             </div>
-            <!-- hidden note form -->
-            <form class="well hidden" id="new_note_form">
-              <div class="form-group">
-                <label for="new_note_name" class="sr-only">New Note Name</label>
-                <input type="text" name="new_note_name" class="form-control" id="new_note_name" placeholder="Note Name">
-              </div>
-              <div class="row">
-                <div class="col-xs-6">
-                  <button type="button" class="btn btn-block btn-danger" onclick="$('#new_note_btn').removeClass('active');uitoggler(this);">Cancel</button>
-                </div>
-                <div class="col-xs-6">
-                  <button type="button" class="btn btn-block btn-primary" onclick="new_note(this);">Create</button>
-                </div>
-              </div>
-              <div class="clearfix"></div>
-            </form>
-{% end if %}
+          </form>
 
-          <div class="list-group">
+{% if notebook_name != u'' %}
+          <!-- new note button exposes new note form -->
+          <div class="form-group">
+            <a href="#" class="btn btn-primary btn-block" id="new_note_btn" onclick="$(this).addClass('active');$('#new_note_form').removeClass('hidden');">
+              <span class="glyphicon glyphicon-plus"></span>
+              New Note
+            </a>
+          </div>
+          <!-- hidden note form -->
+          <form class="well hidden" id="new_note_form">
+            <div class="form-group">
+              <label for="new_note_name" class="sr-only">New Note Name</label>
+              <input type="text" name="new_note_name" class="form-control" id="new_note_name" placeholder="Note Name">
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <button type="button" class="btn btn-block btn-danger" onclick="$('#new_note_btn').removeClass('active');uitoggler(this);">Cancel</button>
+              </div>
+              <div class="col-xs-6">
+                <button type="button" class="btn btn-block btn-primary" onclick="new_note(this);">Create</button>
+              </div>
+            </div>
+            <div class="clearfix"></div>
+          </form>
+
+          <ul class="nav nav-pills nav-stacked">
 {# iterate through existing notes #}
 {% for note in notes %}
-            <a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}" class="list-group-item {% if note == note_name %}active{% end if %}">
-              {% if '%s/%s' % (notebook_name, note) in starred_notes %}
-                <span class='glyphicon glyphicon-star'></span>
-              {% else %}
-                <span class='glyphicon glyphicon-star-empty'></span>
-              {% end if %}
-              {{ note }}
-            </a>
+            <li class="{% if note == note_name %}active{% end if %}">
+              <a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
+                {% if '%s/%s' % (notebook_name, note) in starred_notes %}
+                  <span class='glyphicon glyphicon-star'></span>
+                {% else %}
+                  <span class='glyphicon glyphicon-star-empty'></span>
+                {% end if %}
+                {{ note }}
+              </a>
+            </li>
 {% end for %}
-          </div>
+          </ul>
+          <br>
+{% end if %}
         </div>
 
         <div class="col-sm-8 col-md-9 col-lg-10">

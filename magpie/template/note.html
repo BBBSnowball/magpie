@@ -45,7 +45,7 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
     <input type=submit class="btn btn-danger" value=Cancel name=cancel>
     <br>
     <br>
-    <textarea cols=100 rows=25 name=note class="form-control" tabindex=1>{{ note_contents }}</textarea>
+    <textarea cols=100 rows=25 name=note tabindex=1>{{ note_contents }}</textarea>
     {% if autosave %}
         <script>
           var autosave = function(){
@@ -62,33 +62,41 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
         </script>
     {% end if %}
   {% else %}
-    <br>
-    <button class='btn btn-primary'
-      {% if u'%s/%s' % (notebook_name, note_name) in starred_notes %}
-          onclick="window.location='{{ url_escape(note_name) }}?a=unstar'">
-          <span class="glyphicon glyphicon-star"></span>
-      {% else %}
-          onclick="window.location='{{ url_escape(note_name) }}?a=star'">
-          <span class="glyphicon glyphicon-star-empty"></span>
+    <div class="btn-toolbar" role="toolbar">
+      <div class="btn-group">
+        <button class='btn btn-primary'
+          {% if u'%s/%s' % (notebook_name, note_name) in starred_notes %}
+              onclick="window.location='{{ url_escape(note_name) }}?a=unstar'">
+              <span class="glyphicon glyphicon-star"></span>
+          {% else %}
+              onclick="window.location='{{ url_escape(note_name) }}?a=star'">
+              <span class="glyphicon glyphicon-star-empty"></span>
+          {% end if %}
+        </button>
+        {% if dot %}
+          <button class="btn btn-primary" onclick="window.location='.{{ url_escape(note_name) }}?a=edit'">
+        {% else %}
+          <button class="btn btn-primary" onclick="window.location='{{ url_escape(note_name) }}?a=edit'">
+        {% end if %}
+          <span class="glyphicon glyphicon-pencil"></span>
+          Edit
+        </button>
+      </div>
+      <div class="btn-group">
+        <button class='btn btn-danger' onclick="window.location='{{ url_escape(note_name) }}?a=delete'">
+          <span class="glyphicon glyphicon-trash"></span>
+          Delete
+        </button>
+      </div>
+      {% if dot %}
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="window.location='{{url_escape(note_name)}}?dl=True'">
+            <span class="glyphicon glyphicon-cloud-download"></span>
+            Download Original
+          </button>
+        </div>
       {% end if %}
-    </button>
-    {% if dot %}
-      <button class="btn btn-primary" onclick="window.location='.{{ url_escape(note_name) }}?a=edit'">
-    {% else %}
-      <button class="btn btn-primary" onclick="window.location='{{ url_escape(note_name) }}?a=edit'">
-    {% end if %}
-    Edit</button>
-    <button class='btn btn-danger' onclick="window.location='{{ url_escape(note_name) }}?a=delete'">
-    Delete</button>
-    {% if dot %}
-      <br>
-      <br>
-      <button class="btn btn-primary" onclick="window.location='{{url_escape(note_name)}}?dl=True'">
-      <span class="glyphicon glyphicon-cloud-download"></span>
-      Download Original
-      <span class="glyphicon glyphicon-cloud-download"></span>
-      </button>
-    {% end if %}
+    </div>
     <br>
     <br>
     <div id=rendered_note>
