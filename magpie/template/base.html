@@ -6,7 +6,11 @@
     <title>
       {% block title %}{% end block %} :: magpie
     </title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    {% if theme is not None and theme != '' %}
+      <link rel="stylesheet" href="{{ theme }}" />
+    {% else %}
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    {% end if %}
     <link rel="icon" type="image/jpeg" href="{{ static_url('magpie.jpg') }}" />
   </head>
   <body {% block bodytag %}{% end block %}>
