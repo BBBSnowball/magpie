@@ -15,6 +15,7 @@ ADD requirements.txt /usr/share/magpie/requirements.txt
 RUN pip install -r /usr/share/magpie/requirements.txt
 # Install magpie
 ADD ./ /usr/share/magpie
+RUN sed -i "/address=/s/localhost/0.0.0.0/" /usr/share/magpie/magpie/config/web.cfg
 RUN pip install -e /usr/share/magpie
 
 EXPOSE 8080
