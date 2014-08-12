@@ -25,13 +25,64 @@
     </label>
     <span class=help-block>Saves notes every 5 seconds in edit mode.</span>
   </div>
+  <div class="form-group">
+    <label class="control-label" for="theme">Theme</label>
+    <select id="theme" name="theme" class="form-control">
+      <option value="" {% if config['theme'] == '' %}selected{% end if %}>None</option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/amelia/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/amelia/bootstrap.min.css' %}selected{% end if %}>
+        Amelia
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cerulean/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cerulean/bootstrap.min.css' %}selected{% end if %}>
+        Cerulean
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cosmo/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cosmo/bootstrap.min.css' %}selected{% end if %}>
+        Cosmo
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cyborg/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/cyborg/bootstrap.min.css' %}selected{% end if %}>
+        Cyborg
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/darkly/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/darkly/bootstrap.min.css' %}selected{% end if %}>
+        Darkly
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/flatly/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/flatly/bootstrap.min.css' %}selected{% end if %}>
+        Flatly
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/journal/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/journal/bootstrap.min.css' %}selected{% end if %}>
+        Journal
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/lumen/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/lumen/bootstrap.min.css' %}selected{% end if %}>
+        Lumen
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/readable/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/readable/bootstrap.min.css' %}selected{% end if %}>
+        Readable
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/simplex/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/simplex/bootstrap.min.css' %}selected{% end if %}>
+        Simplex
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css' %}selected{% end if %}>
+        Slate
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/spacelab/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/spacelab/bootstrap.min.css' %}selected{% end if %}>
+        Spacelab
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/superhero/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/superhero/bootstrap.min.css' %}selected{% end if %}>
+        Superhero
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/united/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/united/bootstrap.min.css' %}selected{% end if %}>
+        United
+      </option>
+      <option value="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css" {% if config['theme'] == '//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css' %}selected{% end if %}>
+        Yeti
+      </option>
+    </select>
+  </div>
   <input type="hidden" name="save" value="Save" />
   <button type="submit" class="btn btn-primary" tabindex="6">Save</button>
   <hr>
   <div class=lead>Advanced Settings</div>
   <div class="form-group">
     <label class=control-label for=address>Listen Address</label>
-      <input type="text" class=form-control name="address" value="{{ config['address'] }}" placeholder="Listen Address"/> 
+      <input type="text" class=form-control name="address" value="{{ config['address'] }}" placeholder="Listen Address"/>
       <span class=help-block>Set to "0.0.0.0" to listen on all addresses</span>
   </div>
   <div class="form-group">
