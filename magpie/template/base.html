@@ -14,7 +14,7 @@
     <link rel="icon" type="image/jpeg" href="{{ static_url('magpie.jpg') }}" />
   </head>
   <body {% block bodytag %}{% end block %}>
-    <nav class="navbar navbar-default" role="navigation">
+    <nav class="navbar navbar-static-top navbar-default" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar-collapse">
@@ -59,11 +59,11 @@
             </li>
           </ul>
 
-          <button class="btn btn-primary btn-sm navbar-btn hidden-xs" data-toggle="modal" data-target="#notebookModal">
+          <button class="btn btn-success btn-sm navbar-btn hidden-xs" data-toggle="modal" data-target="#notebookModal">
             <span class="glyphicon glyphicon-plus"></span>
             New Notebook
           </button>
-          <button class="btn btn-primary btn-block navbar-btn visible-xs" data-toggle="modal" data-target="#notebookModal">
+          <button class="btn btn-success btn-block navbar-btn visible-xs" data-toggle="modal" data-target="#notebookModal">
             <span class="glyphicon glyphicon-plus"></span>
             New Notebook
           </button>
@@ -72,7 +72,7 @@
             <div class="input-group">
               <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
               <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-info">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
               </span>
@@ -90,7 +90,7 @@
               <div class="input-group">
                 <input type="search" name="q" id="search" class="form-control" size="15" placeholder="Search" tabindex="10">
                 <span class="input-group-btn">
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-info">
                     <span class="glyphicon glyphicon-search"></span>
                   </button>
                 </span>
@@ -99,30 +99,15 @@
           </form>
 
 {% if notebook_name != u'' %}
-          <!-- new note button exposes new note form -->
+          <!-- new note button -->
           <div class="form-group">
-            <a href="#" class="btn btn-primary btn-block" id="new_note_btn" onclick="$(this).addClass('active');$('#new_note_form').removeClass('hidden');">
+            <button type="button" class="btn btn-success btn-block" id="new_note_btn" data-toggle="modal" data-target="#noteModal">
               <span class="glyphicon glyphicon-plus"></span>
               New Note
-            </a>
+            </button>
           </div>
-          <!-- hidden note form -->
-          <form class="well hidden" id="new_note_form">
-            <div class="form-group">
-              <label for="new_note_name" class="sr-only">New Note Name</label>
-              <input type="text" name="new_note_name" class="form-control" id="new_note_name" placeholder="Note Name">
-            </div>
-            <div class="row">
-              <div class="col-xs-6">
-                <button type="button" class="btn btn-block btn-danger" onclick="$('#new_note_btn').removeClass('active');uitoggler(this);">Cancel</button>
-              </div>
-              <div class="col-xs-6">
-                <button type="button" class="btn btn-block btn-primary" onclick="new_note(this);">Create</button>
-              </div>
-            </div>
-            <div class="clearfix"></div>
-          </form>
 
+          <!-- list notes in the current notebook -->
           <ul class="nav nav-pills nav-stacked">
 {# iterate through existing notes #}
 {% for note in notes %}
@@ -149,6 +134,7 @@
       </div>
     </div>
 
+    <!-- New notebook modal -->
     <div class="modal fade" id="notebookModal" tabindex="-1" role="dialog" aria-labelledby="notebookModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -164,10 +150,50 @@
               </div>
               <div class="row">
                 <div class="col-xs-6">
-                  <button type="button" class="btn btn-block btn-danger" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-block btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                  </button>
                 </div>
                 <div class="col-xs-6">
-                  <button type="button" class="btn btn-block btn-primary" onclick="new_notebook(this);">Create</button>
+                  <button type="button" class="btn btn-block btn-primary" onclick="new_notebook(this);">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Create
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New note modal -->
+    <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="noteModalLabel">New Note</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="new_note_name" class="sr-only">New Note Name</label>
+                <input type="text" name="new_note_name" class="form-control" id="new_note_name" placeholder="Note Name">
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-block btn-danger" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                  </button>
+                </div>
+                <div class="col-xs-6">
+                  <button type="button" class="btn btn-block btn-primary" onclick="new_note(this);">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Create
+                  </button>
                 </div>
               </div>
             </form>
@@ -180,9 +206,6 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script>
       //helpers
-      var uitoggler = function(self){
-        $(self).parents("form").first().addClass("hidden");
-      };
       var new_notebook = function(self){
         var name = '/' + encodeURIComponent($("#new_notebook_name").val());
         $.post(name).done(function(){

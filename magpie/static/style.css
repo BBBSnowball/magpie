@@ -5,6 +5,15 @@ img {
   max-width: 100%;
 }
 textarea {
-  max-width: 100%;
+  resize: none;
   font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+}
+.note-toolbar {
+  margin-bottom: 15px;
+}
+@media (min-width: 768px) {
+  .navbar-btn {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 }
