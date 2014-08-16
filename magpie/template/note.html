@@ -39,13 +39,22 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
 
 {% block body %}
   {% if edit %}
-    <br>
     <form method=POST>
-    <input type=submit class="btn btn-success" value=Save name=save>
-    <input type=submit class="btn btn-danger" value=Cancel name=cancel>
-    <br>
-    <br>
-    <textarea cols=100 rows=25 name=note tabindex=1>{{ note_contents }}</textarea>
+      <div class="btn-toolbar note-toolbar" role="toolbar">
+        <div class="btn-group">
+          <button type="submit" class="btn btn-success" name="save">
+            <span class="glyphicon glyphicon-save"></span>
+            Save
+          </button>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-danger" name="cancel">
+            <span class="glyphicon glyphicon-remove"></span>
+            Cancel
+          </button>
+        </div>
+      </div>
+    <textarea class="form-control" rows=25 name=note tabindex=1>{{ note_contents }}</textarea>
     {% if autosave %}
         <script>
           var autosave = function(){
@@ -62,7 +71,7 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
         </script>
     {% end if %}
   {% else %}
-    <div class="btn-toolbar" role="toolbar">
+    <div class="btn-toolbar note-toolbar" role="toolbar">
       <div class="btn-group">
         <button class='btn btn-primary'
           {% if u'%s/%s' % (notebook_name, note_name) in starred_notes %}
@@ -97,8 +106,6 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
         </div>
       {% end if %}
     </div>
-    <br>
-    <br>
     <div id=rendered_note>
       <div id="savefail" class="alert alert-danger fade in hidden" data-dismiss="alert">
         <span onclick="$(this).parent().addClass('hidden');">×</span>
