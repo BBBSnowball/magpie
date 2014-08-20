@@ -162,12 +162,12 @@ class NoteHandler(BaseHandler):
         note_name = self.encode_name(note_name)
 
         action = self.get_argument('a', 'view')
-        if bool(self.get_argument('save', False)):
+        if self.get_argument('save', False) != False:
             note = self.get_argument('note')
             toggle = self.get_argument('toggle', -1)
             self._edit(notebook_name=notebook_name, note_name=note_name,
                        note_contents=note, confirmed=True, toggle=toggle)
-        elif bool(self.get_argument('delete', False)):
+        elif self.get_argument('delete', False) != False:
             self._delete(notebook_name, note_name, confirmed=True)
         else:
             self.redirect(note_name.replace('#', '%23'))
