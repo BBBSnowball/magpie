@@ -38,7 +38,9 @@ class ConfigHandler(BaseHandler):
                 val = self.get_argument(key, False)
             else:
                 val = self.get_argument(key, None)
-            if val is None or val == '':
+            if key == 'theme' and val is not None:
+                new[key] = str(val)
+            elif val is None or val == '':
                 new[key] = old[key]
             elif key == 'pwdhash':
                 new[key] = bcrypt.hashpw(val, bcrypt.gensalt())
