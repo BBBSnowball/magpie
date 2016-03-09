@@ -2,6 +2,12 @@
 magpie
 ======
 
+Security Notice
+---------------
+**Magpie is no longer under active development.**
+The developer has `disclosed`_ the existence of a bug that exposes the
+*entire filesystem* through Magpie.
+
 .. image:: https://dl.dropboxusercontent.com/u/402325/dontdelete/magpie.jpg
 
 magpie: [ma]rkdown, [g]it, [pie]thon
@@ -151,6 +157,7 @@ Image Attribution
 =================
 Logo/favicon courtesy of `Kieran Palmer`_, as licensed under CC BY-SA 2.0 Generic.
 
+.. _disclosed: https://github.com/charlesthomas/magpie/issues/73#issuecomment-190828371
 .. _libmagic: https://pypi.python.org/pypi/filemagic/1.6
 .. _issue #4: https://github.com/charlesthomas/magpie/issues/4
 .. _Github: https://help.github.com/articles/create-a-repo
