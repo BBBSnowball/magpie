@@ -3,7 +3,7 @@ magpie
 ======
 
 Security Notice
----------------
+===============
 **Magpie is no longer under active development.**
 The developer has `disclosed`_ the existence of a bug that exposes the
 *entire filesystem* through Magpie.
