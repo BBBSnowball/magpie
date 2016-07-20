@@ -52,7 +52,6 @@ def make_app(config=None):
     if not options.prefix.endswith('/'):
         options.prefix += '/'
     urls = get_urls(options.prefix)
-    print(repr(urls))
 
     app_config.update(
       login_url=options.prefix + 'login',
