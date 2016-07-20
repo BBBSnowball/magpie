@@ -21,5 +21,5 @@ class LoginHandler(BaseHandler):
                 + quote("Username/password incorrect!"))
         else:
             self.set_cookie('session', self.settings.session,
-                            expires=2667692112)
+                            expires_days=365)
             self.redirect(self.get_argument('next', self.settings.prefix))

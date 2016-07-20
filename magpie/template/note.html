@@ -7,7 +7,7 @@
       var checkbox_regex = /\[([x| ])\](.*)<\/p>/g;
       var replace_html   = "<label><input type=checkbox onchange=\"toggle(this)\" zindex=\"$$INDEX$$\"$$CHECKED$$>$$TEXT$$</label>";
       var index          = 0;
-      $(el).html($(el).html().replace(checkbox_regex, function(a,b,c){
+      $(el).html(($(el).html() ? $(el).html() : '').replace(checkbox_regex, function(a,b,c){
         return replace_html.replace("$$INDEX$$", index++).replace("$$TEXT$$", c).replace("$$CHECKED$$", b == " " ? "" : " checked=\"true\"");
       }));
     }
@@ -30,6 +30,20 @@
         $("#savefail").removeClass("hidden");
       });
     }
+    var dirty = false;
+    function setDirty(val) {
+      if (dirty != val) {
+        // on change
+        dirty = val;
+        if (dirty) {
+          // on dirty
+          document.title = "*" + document.title
+        } else {
+          // on clean
+          document.title = document.title.substr(1)
+        }
+      }
+    }
   </script>
 {% end block %}
 
@@ -38,31 +52,55 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
 {% end block %}
 
 {% block body %}
+  <ol class="breadcrumb">
+    <li><a href="/{{ url_escape(notebook_name) }}">{{ notebook_name }}</a></li>
+    <li><a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note_name) }}">{{ note_name }}</a></li>
+  </ol>
+
   {% if edit %}
     <br>
+    <button class="btn btn-primary visible-xs" onclick="$('.row-offcanvas').toggleClass('active');">Notes</button>
     <form method=POST>
+    <input type="text" name="note_name_rename" value="{{ note_name }}" >
+    <br>
+    <br>
     <input type=submit class="btn btn-success" value=Save name=save>
     <input type=submit class="btn btn-danger" value=Cancel name=cancel>
     <br>
     <br>
-    <textarea cols=100 rows=25 name=note tabindex=1>{{ note_contents }}</textarea>
-    {% if autosave %}
+    {% if wysiwyg %}
+        {# xhtml_escape(note_contents) #}
+      <div  class="editable">
+        <p>test</p>
+        <h5>test</h5>
+
+
+      </div>
+    {% end if %}
+    <textarea cols=100 rows=25 name=note tabindex=1{% if wysiwyg %} class="hidden"{% end if %} oninput="setDirty(true);">{{ note_contents }}</textarea>
+    {% if autosave and autosave_interval and autosave_interval > 0 %}
         <script>
           var autosave = function(){
-            $.ajax({
-               url:  "{{ url_escape(note_name) }}?a=edit"
-              ,type: "POST"
-              ,data: {
-                 save: "Save"
-                ,note: $("textarea").val()
-              }
-            });
+            if (dirty) {
+              $.ajax({
+                 url:  "{{ url_escape(note_name) }}?a=edit"
+                ,type: "POST"
+                ,data: {
+                   save: "Save"
+                  ,note: $("textarea").val()
+                }
+                ,success: function(data, textStatus, jqXHR) {
+                   setDirty(false);
+                }
+              });
+            }
           };
-          setInterval(autosave, 5000);
+          setInterval(autosave, {{ autosave_interval * 1000 }});
         </script>
     {% end if %}
   {% else %}
     <br>
+    <button class="btn btn-primary visible-xs" onclick="$('.row-offcanvas').toggleClass('active');">&lt; Notes</button>&nbsp;
     <button class='btn btn-primary'
       {% if u'%s/%s' % (notebook_name, note_name) in starred_notes %}
           onclick="window.location='{{ url_escape(note_name) }}?a=unstar'">
@@ -80,6 +118,7 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
     Edit</button>
     <button class='btn btn-danger' onclick="window.location='{{ url_escape(note_name) }}?a=delete'">
     Delete</button>
+
     {% if dot %}
       <br>
       <br>

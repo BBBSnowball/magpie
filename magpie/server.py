@@ -37,6 +37,8 @@ def make_app(config=None):
     define('pwdhash', default=None, type=str)
     define('autosave', default=False, type=bool)
     define('prefix', default='/', type=str)
+    define('autosave_interval', default='5', type=int)
+    define('wysiwyg', default=False, type=bool)
 
     if config is not None:
         # This should only ever be used for testing
@@ -65,6 +67,8 @@ def make_app(config=None):
     server.settings.config_path = config_path
     server.settings.autosave = options.autosave
     server.settings.prefix = options.prefix
+    server.settings.autosave_interval = options.autosave_interval
+    server.settings.wysiwyg = options.wysiwyg
 
     server.git = git.bake(_cwd=server.settings.repo)
 
