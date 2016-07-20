@@ -62,7 +62,7 @@ class BaseHandler(RequestHandler):
         return self.get_cookie('session', '') == self.settings.session
 
     def encode_name(self, name):
-        return re.sub(r'[:\|\\\/\?\*"]', lambda m: self._xmlescape(m), name.replace('+', ' '))
+        return re.sub(r'[:\|\\\/\?\*"&;.]', lambda m: self._xmlescape(m), name.replace('+', ' '))
 
     def _xmlescape(self, value):
         return '&#' + str(ord(value.group())) + ';'
