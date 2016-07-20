@@ -12,7 +12,7 @@ class NotebookHandler(BaseHandler):
         notebook_name = self.encode_name(notebook_name)
 
         if not path.isdir(path.join(self.settings.repo, notebook_name)):
-            self.redirect('/')
+            self.redirect(self.settings.prefix)
         else:
             notebook_path = path.join(self.settings.repo, notebook_name)
             notebook_contents = listdir(notebook_path)

@@ -35,10 +35,10 @@
             <span class="icon-bar"></span>
           </button>
 {#          <a class="navbar-brand" href="#">magpie</a> #}
-          <a href="/config" class="navbar-brand config">
+          <a href="{{ prefix }}config" class="navbar-brand config">
             <span class="glyphicon glyphicon-wrench"></span>
           </a>
-          <a href="/" class="navbar-brand">
+          <a href="{{ prefix }}" class="navbar-brand">
             <span class="glyphicon glyphicon-home"></span>
           </a>
         </div>
@@ -46,7 +46,7 @@
           <ul class="nav navbar-nav">
             {# SEARCH #}
             <li>
-              <form method="GET" action="/search" class="navbar-form">
+              <form method="GET" action="{{ prefix }}search" class="navbar-form">
                 <div class="form-group">
                   <input type="search" name="q" id="search" size="15"
                   placeholder=" search" tabindex="10">
@@ -66,7 +66,7 @@
         {% for notebook in notebooks %}
           {% if notebook != '.git' %}
                 <li {% if notebook_name == notebook %}class="active"{% end if %}>
-                  <a href="/{{ url_escape(notebook) }}">
+                  <a href="{{ prefix }}{{ url_escape(notebook) }}">
                     {{ notebook }}
                   </a>
                 </li>
@@ -94,7 +94,7 @@
               </li>
               {% for note in notes %}
                 <li{% if note == note_name %} class="active"{% end if %}>
-                  <a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
+                  <a href="{{ prefix }}{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
                     {% if '%s/%s' % (notebook_name, note) in starred_notes %}
                       <span class='glyphicon glyphicon-star'></span>
                     {% else %}
@@ -182,13 +182,13 @@
         $(self).parents("li").first().addClass("hidden");
       };
       var new_notebook = function(self){
-        var name = '/' + encodeURIComponent($("#new_notebook_name").val());
+        var name = '{{ prefix }}' + encodeURIComponent($("#new_notebook_name").val());
         $.post(name).done(function(){
           window.location = name;
         });
       };
       var new_note = function(self){
-        var name = '/{{ url_escape(notebook_name) }}/' + encodeURIComponent($("#new_note_name").val()).replace(/#/g, '%23');
+        var name = '{{ prefix }}{{ url_escape(notebook_name) }}/' + encodeURIComponent($("#new_note_name").val()).replace(/#/g, '%23');
         $.post(name, data = {
            save: true
           ,note: ''

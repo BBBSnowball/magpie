@@ -10,7 +10,7 @@ from tornado.options import define, options, parse_config_file
 from tornado.web import Application
 
 from config import config_path
-from handler import urls
+from handler import get_urls
 
 class AttrDict(dict):
     def __getattr__(self, key):
@@ -27,8 +27,7 @@ def make_app(config=None):
     template_path = path.join(root, 'template')
 
     app_config = dict(static_path=static_path,
-                      template_path=template_path,
-                      login_url='/login')
+                      template_path=template_path)
 
     define('port', default='8080', type=int)
     define('address', default='localhost', type=str)
@@ -37,6 +36,7 @@ def make_app(config=None):
     define('username', default=None, type=str)
     define('pwdhash', default=None, type=str)
     define('autosave', default=False, type=bool)
+    define('prefix', default='/', type=str)
     define('autosave_interval', default='5', type=int)
     define('wysiwyg', default=False, type=bool)
 
@@ -49,6 +49,14 @@ def make_app(config=None):
     if options.testing:
         app_config.update(debug=True)
 
+    if not options.prefix.endswith('/'):
+        options.prefix += '/'
+    urls = get_urls(options.prefix)
+
+    app_config.update(
+      login_url=options.prefix + 'login',
+      static_url_prefix=options.prefix + 'static/')
+
     server = Application(urls, **app_config)
     server.settings = AttrDict(server.settings)
     server.settings.repo = options.repo
@@ -57,6 +65,7 @@ def make_app(config=None):
     server.settings.session = _rand_str()
     server.settings.config_path = config_path
     server.settings.autosave = options.autosave
+    server.settings.prefix = options.prefix
     server.settings.autosave_interval = options.autosave_interval
     server.settings.wysiwyg = options.wysiwyg
 
