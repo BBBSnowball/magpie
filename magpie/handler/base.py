@@ -18,6 +18,9 @@ class BaseHandler(RequestHandler):
 
         kwargs['notebooks'] = self._notebooks_list(kwargs.get('hide_notebooks',
                                                               False))
+
+        kwargs['prefix'] = self.settings.prefix
+
         super(BaseHandler, self).render(template, **kwargs)
 
     def _notebooks_list(self, hide_notebooks=False):
