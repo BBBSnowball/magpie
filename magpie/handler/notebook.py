@@ -10,7 +10,7 @@ class NotebookHandler(BaseHandler):
         notebook_name = self.encode_name(notebook_name)
 
         if not path.isdir(path.join(self.settings.repo, notebook_name)):
-            self.redirect('/magpie')
+            self.redirect(self.settings.prefix)
         else:
             if notebook_name.endswith('/'):
                 notebook_name = notebook_name[:-1]

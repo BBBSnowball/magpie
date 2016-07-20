@@ -13,12 +13,12 @@
     <br>
     <ul class="nav nav-tabs">
       <li>
-        <a href="/magpie/config" class=config>
+        <a href="{{ prefix }}config" class=config>
           <span class="glyphicon glyphicon-wrench"></span>
         </a>
       </li>
       <li>
-        <a href="/magpie">
+        <a href="{{ prefix }}">
           <span class="glyphicon glyphicon-home"></span>
         </a>
       </li>
@@ -41,7 +41,7 @@
 {% for notebook in notebooks %}
   {% if notebook != '.git' %}
         <li {% if notebook_name == notebook %}class="active"{% end if %}>
-          <a href="/magpie/{{ url_escape(notebook) }}">
+          <a href="{{ prefix }}{{ url_escape(notebook) }}">
             {{ notebook }}
           </a>
         </li>
@@ -53,7 +53,7 @@
         <ul class="nav nav-pills nav-stacked">
         <!-- search -->
         <li>
-          <form method="GET" action="/magpie/search">
+          <form method="GET" action="{{ prefix }}search">
             <div class="form-group">
               <input type="search" name="q" id="search" size="15"
               placeholder=" search" tabindex="10">
@@ -86,7 +86,7 @@
 {# iterate through existing notes #}
 {% for note in notes %}
         <li {% if note == note_name %}class="active"{% end if %}>
-            <a href="/magpie/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
+            <a href="{{ prefix }}{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
             {% if '%s/%s' % (notebook_name, note) in starred_notes %}
               <span class='glyphicon glyphicon-star'></span>
             {% else %}
@@ -114,13 +114,13 @@
         $(self).parents("li").first().addClass("hidden");
       };
       var new_notebook = function(self){
-        var name = '/magpie/' + encodeURIComponent($("#new_notebook_name").val());
+        var name = '{{ prefix }}' + encodeURIComponent($("#new_notebook_name").val());
         $.post(name).done(function(){
           window.location = name;
         });
       };
       var new_note = function(self){
-        var name = '/magpie/{{ url_escape(notebook_name) }}/' + encodeURIComponent($("#new_note_name").val()).replace(/#/g, '%23');
+        var name = '{{ prefix }}{{ url_escape(notebook_name) }}/' + encodeURIComponent($("#new_note_name").val()).replace(/#/g, '%23');
         $.post(name, data = {
            save: true
           ,note: ''
