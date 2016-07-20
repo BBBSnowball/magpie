@@ -14,7 +14,7 @@ class SearchHandler(BaseHandler):
         if query == '':
             self.redirect(self.settings.prefix)
         try:
-            results = str(grep('-Rli', '--exclude-dir', '.git', query,
+            results = str(grep('-Rli', '--exclude-dir', '.git', "--", query,
                                self.settings.repo))
         except ErrorReturnCode_1 as e:
             results = ''
@@ -39,7 +39,7 @@ class SearchHandler(BaseHandler):
             resultpath = path.join(self.settings.repo, filename[1:])
             if path.exists(resultpath):
                 try:
-                    string = str(grep('-i', query, resultpath ))
+                    string = str(grep('-i', "--", query, resultpath ))
                 except ErrorReturnCode_1 as e:
                     string = ''
 
