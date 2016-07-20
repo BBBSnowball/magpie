@@ -38,7 +38,7 @@
           <a href="{{ prefix }}config" class="navbar-brand config">
             <span class="glyphicon glyphicon-wrench"></span>
           </a>
-          <a href="/" class="navbar-brand">
+          <a href="{{ prefix }}" class="navbar-brand">
             <span class="glyphicon glyphicon-home"></span>
           </a>
         </div>
@@ -46,7 +46,7 @@
           <ul class="nav navbar-nav">
             {# SEARCH #}
             <li>
-              <form method="GET" action="/search" class="navbar-form">
+              <form method="GET" action="{{ prefix }}search" class="navbar-form">
                 <div class="form-group">
                   <input type="search" name="q" id="search" size="15"
                   placeholder=" search" tabindex="10">
@@ -94,7 +94,7 @@
               </li>
               {% for note in notes %}
                 <li{% if note == note_name %} class="active"{% end if %}>
-                  <a href="/{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
+                  <a href="{{ prefix }}{{ url_escape(notebook_name) }}/{{ url_escape(note) }}">
                     {% if '%s/%s' % (notebook_name, note) in starred_notes %}
                       <span class='glyphicon glyphicon-star'></span>
                     {% else %}
