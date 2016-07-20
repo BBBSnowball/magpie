@@ -40,12 +40,43 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
 {% block body %}
   {% if edit %}
     <br>
+    <script type=text/javascript>
+      function insertText(textArea, text) {
+        // http://stackoverflow.com/a/11077016
+
+        //IE support
+        if (document.selection) {
+            textArea.focus();
+            sel = document.selection.createRange();
+            sel.text = text;
+        }
+        //MOZILLA and others
+        else if (textArea.selectionStart || textArea.selectionStart == '0') {
+            var startPos = textArea.selectionStart;
+            var endPos = textArea.selectionEnd;
+            textArea.value = textArea.value.substring(0, startPos)
+                + text
+                + textArea.value.substring(endPos, textArea.value.length);
+            textArea.selectionStart = startPos + text.length;
+            textArea.selectionEnd   = startPos + text.length;
+            textArea.focus();
+        } else {
+            textArea.value += text;
+        }
+      }
+      function addCheckbox() {
+        insertText(
+          document.getElementById("note"),
+          "\n[ ] ");
+      }
+    </script>
     <form method=POST>
     <input type=submit class="btn btn-success" value=Save name=save>
     <input type=submit class="btn btn-danger" value=Cancel name=cancel>
+    <input type=button class="btn" value="Add checkbox" name"add-checkbox" onclick="addCheckbox();">
     <br>
     <br>
-    <textarea cols=100 rows=25 name=note tabindex=1>{{ note_contents }}</textarea>
+    <textarea cols=100 rows=25 name=note id=note tabindex=1>{{ note_contents }}</textarea>
     {% if autosave %}
         <script>
           var autosave = function(){
