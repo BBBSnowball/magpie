@@ -13,13 +13,13 @@ class LoginHandler(BaseHandler):
         username = self.get_argument('username', '')
         password = self.get_argument('password', '')
         if username == '' or password == '':
-            self.redirect('/login?error=' + quote(("Username and password are "
+            self.redirect('/magpie/login?error=' + quote(("Username and password are "
                                                    "required!")))
         elif username != self.settings.username or \
         bcrypt.hashpw(password, self.settings.pwdhash) != self.settings.pwdhash:
-            self.redirect('/login?error=' + quote("Username/password "
+            self.redirect('/magpie/login?error=' + quote("Username/password "
                                                   "incorrect!"))
         else:
             self.set_cookie('session', self.settings.session,
                             expires=2667692112)
-            self.redirect(self.get_argument('next', '/'))
+            self.redirect(self.get_argument('next', '/magpie'))

@@ -28,7 +28,8 @@ def make_app(config=None):
 
     app_config = dict(static_path=static_path,
                       template_path=template_path,
-                      login_url='/login')
+                      login_url='/magpie/login',
+                      static_url_prefix="/magpie/static/")
 
     define('port', default='8080', type=int)
     define('address', default='localhost', type=str)

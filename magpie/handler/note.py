@@ -22,7 +22,7 @@ class NoteHandler(BaseHandler):
                         b64encode(','.join(starred).encode('utf8')),
                         expires=2667692112)
         if redir:
-            self.redirect('/%s/%s' % (url_escape(notebook_name).replace('#', '%23'), url_escape(note_name).replace('#', '%23')))
+            self.redirect('/magpie/%s/%s' % (url_escape(notebook_name).replace('#', '%23'), url_escape(note_name).replace('#', '%23')))
 
     def _delete(self, notebook_name, note_name, confirmed=False):
         notebook_enc = self.encode_name(notebook_name)
@@ -37,7 +37,7 @@ class NoteHandler(BaseHandler):
 
             self._star(notebook_name, note_name, 'unset', False)
 
-            self.redirect('/' + notebook_enc.replace('#', '%23'))
+            self.redirect('/magpie/' + notebook_enc.replace('#', '%23'))
         else:
             self.render('delete.html', notebook_name=notebook_name,
                         note_name=note_name)

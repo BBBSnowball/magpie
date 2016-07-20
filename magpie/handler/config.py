@@ -38,7 +38,7 @@ class ConfigHandler(BaseHandler):
             else:
                 config_file.write("%s=%s\n" % (key, val))
         config_file.close()
-        self.redirect('/')
+        self.redirect('/magpie')
 
     def _fetch_existing_config(self):
         existing = dict()
