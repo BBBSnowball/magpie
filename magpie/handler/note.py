@@ -1,6 +1,7 @@
 from base64 import b64encode, b64decode
 from os.path import exists, join
 from re import search
+import codecs
 
 from magic import Magic
 from markdown2 import markdown
@@ -52,7 +53,7 @@ class NoteHandler(BaseHandler):
             rename_note_enc = self.encode_name(note_name_rename)
             rename_path = join(self.settings.repo, notebook_enc, rename_note_enc)
         if not confirmed:
-            note_contents = open(path).read()
+            note_contents = codecs.open(path, "r", "utf-8").read()
             self.render('note.html', notebook_name=notebook_name,
                         note_name=note_name, note_contents=note_contents,
                         edit=True, autosave=self.settings['autosave'], 
@@ -60,7 +61,7 @@ class NoteHandler(BaseHandler):
                         wysiwyg=self.settings['wysiwyg'])
         else:
             if toggle > -1:
-                f = open(path)
+                f = f = codecs.open(path, "r", "utf-8")
                 tmp = []
                 search_string = r'^(\s*?)(\[.\])\s(.*)$'
                 index = 0
@@ -111,7 +112,7 @@ class NoteHandler(BaseHandler):
             path = join(self.settings.repo, notebook_enc, '.' + note_enc)
         else:
             path = join(self.settings.repo, notebook_enc, note_enc)
-        note_contents = open(path).read()
+        note_contents = codecs.open(path, "r", "utf-8").read()
         note_contents = markdown(note_contents)
         if highlight is not None:
             note_contents = self.highlight(note_contents, highlight)
@@ -121,7 +122,7 @@ class NoteHandler(BaseHandler):
 
     def _view_file(self, notebook_name, note_name):
         path = join(self.settings.repo, notebook_name, note_name)
-        with open(path, 'rb') as f:
+        with codecs.open(path, 'rb', "utf-8") as f:
             self.set_header("Content-Disposition", "attachment; filename=%s" % \
                             note_name)
             self.write(f.read())
@@ -148,7 +149,7 @@ class NoteHandler(BaseHandler):
 
                 # Open the file since m.id_filename() does not accept utf8
                 # paths, not even when using path.decode('utf8')
-                with open(path) as f:
+                with open(path, "r") as f:
                     mime = m.id_buffer(f.read())
                     if 'text' in mime or 'empty' in mime:
                         self._view_plaintext(notebook_name=notebook_name,
