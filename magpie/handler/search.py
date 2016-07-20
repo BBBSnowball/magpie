@@ -12,7 +12,7 @@ class SearchHandler(BaseHandler):
     def get(self):
         query = unquote(self.get_argument('q', ''))
         if query == '':
-            self.redirect('/')
+            self.redirect(self.settings.prefix)
         try:
             results = str(grep('-R', '--exclude-dir', '.git', query,
                                self.settings.repo))

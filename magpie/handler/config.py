@@ -7,7 +7,7 @@ from base import BaseHandler
 
 class ConfigHandler(BaseHandler):
     ALLOWED = {'testing': bool, 'port': int, 'pwdhash': str, 'repo': str,
-               'username': str, 'autosave': bool, 'address': str}
+               'username': str, 'autosave': bool, 'autosave_interval': int, 'address': str, 'wysiwyg' : bool}
     @authenticated
     def get(self):
         self.render('config.html', config=self._fetch_existing_config())
@@ -32,13 +32,13 @@ class ConfigHandler(BaseHandler):
             elif self.ALLOWED[key] == bool:
                 new[key] = bool(val)
         config_file = open(self.settings.config_path.web, 'w')
-        for key, val in new.items():
+        for key, val in sorted(new.items()):
             if self.ALLOWED[key] == str:
                 config_file.write("%s='%s'\n" % (key, val))
             else:
                 config_file.write("%s=%s\n" % (key, val))
         config_file.close()
-        self.redirect('/magpie')
+        self.redirect(self.settings.prefix)
 
     def _fetch_existing_config(self):
         existing = dict()

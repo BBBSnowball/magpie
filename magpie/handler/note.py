@@ -20,9 +20,9 @@ class NoteHandler(BaseHandler):
             starred.remove(full_name)
         self.set_cookie('starred_notes',
                         b64encode(','.join(starred).encode('utf8')),
-                        expires=2667692112)
+                        expires_days=365)
         if redir:
-            self.redirect('/magpie/%s/%s' % (url_escape(notebook_name).replace('#', '%23'), url_escape(note_name).replace('#', '%23')))
+            self.redirect('%s%s/%s' % (self.settings.prefix, url_escape(notebook_name).replace('#', '%23'), url_escape(note_name).replace('#', '%23')))
 
     def _delete(self, notebook_name, note_name, confirmed=False):
         notebook_enc = self.encode_name(notebook_name)
@@ -37,22 +37,27 @@ class NoteHandler(BaseHandler):
 
             self._star(notebook_name, note_name, 'unset', False)
 
-            self.redirect('/magpie/' + notebook_enc.replace('#', '%23'))
+            self.redirect(self.settings.prefix + notebook_enc.replace('#', '%23'))
         else:
             self.render('delete.html', notebook_name=notebook_name,
                         note_name=note_name)
 
     def _edit(self, notebook_name, note_name, note_contents=None,
-              confirmed=False, toggle=-1):
+              confirmed=False, toggle=-1, note_name_rename=None):
 
         notebook_enc = self.encode_name(notebook_name)
         note_enc = self.encode_name(note_name)
         path = join(self.settings.repo, notebook_enc, note_enc)
+        if note_name_rename:
+            rename_note_enc = self.encode_name(note_name_rename)
+            rename_path = join(self.settings.repo, notebook_enc, rename_note_enc)
         if not confirmed:
             note_contents = open(path).read()
             self.render('note.html', notebook_name=notebook_name,
                         note_name=note_name, note_contents=note_contents,
-                        edit=True, autosave=self.settings['autosave'])
+                        edit=True, autosave=self.settings['autosave'], 
+                        autosave_interval=self.settings['autosave_interval'],
+                        wysiwyg=self.settings['wysiwyg'])
         else:
             if toggle > -1:
                 f = open(path)
@@ -89,6 +94,13 @@ class NoteHandler(BaseHandler):
             except ErrorReturnCode_1 as e:
                 if 'nothing to commit' not in e.message:
                     raise
+            if note_name_rename and note_name_rename != note_name:
+                # rename note
+                message = 'moving %s to %s' % (path, rename_path)
+                # TODO: don't force; do something more graceful
+                self.application.git.mv('-f', path, rename_path)
+                self.application.git.commit('-m', message)
+                note_enc = rename_note_enc
             self.redirect(note_enc.replace('#', '%23'))
 
     def _view_plaintext(self, notebook_name, note_name, highlight=None,
@@ -105,7 +117,7 @@ class NoteHandler(BaseHandler):
             note_contents = self.highlight(note_contents, highlight)
         self.render('note.html', notebook_name=notebook_name,
                     note_name=note_name, note_contents=note_contents,
-                    edit=False, dot=dot)
+                    edit=False, dot=dot, wysiwyg=self.settings['wysiwyg'])
 
     def _view_file(self, notebook_name, note_name):
         path = join(self.settings.repo, notebook_name, note_name)
@@ -165,8 +177,9 @@ class NoteHandler(BaseHandler):
         if bool(self.get_argument('save', False)):
             note = self.get_argument('note')
             toggle = self.get_argument('toggle', -1)
+            note_name_rename = self.get_argument('note_name_rename', None)
             self._edit(notebook_name=notebook_name, note_name=note_name,
-                       note_contents=note, confirmed=True, toggle=toggle)
+                       note_contents=note, confirmed=True, toggle=toggle, note_name_rename=note_name_rename)
         elif bool(self.get_argument('delete', False)):
             self._delete(notebook_name, note_name, confirmed=True)
         else:
