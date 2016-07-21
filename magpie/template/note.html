@@ -5,21 +5,21 @@
   <script type=text/javascript>
     function checkbox_replace(el) {
       var checkbox_regex = /\[([x| ])\](.*)<\/p>/g;
-      var replace_html   = "<label><input type=checkbox onchange=\"toggle(this)\" zindex=\"$$INDEX$$\"$$CHECKED$$>$$TEXT$$</label>";
+      var replace_html   = "<label><input type=checkbox onchange=\"toggle(this, $$INDEX$$)\" zindex=\"$$INDEX$$\"$$CHECKED$$>$$TEXT$$</label>";
       var index          = 0;
       $(el).html(($(el).html() ? $(el).html() : '').replace(checkbox_regex, function(a,b,c){
         return replace_html.replace("$$INDEX$$", index++).replace("$$TEXT$$", c).replace("$$CHECKED$$", b == " " ? "" : " checked=\"true\"");
       }));
     }
-    function toggle(el) {
-      var sindex = $(el).attr("zindex");
+    function toggle(el, sindex) {
       var ostate = !$(el).is(":checked");
       $.post(
          "{{ url_escape(note_name) }}"
         ,data={
-           note:   ''
-          ,toggle: sindex
-          ,save:   true
+           note:     ''
+          ,toggle:   sindex
+          ,newstate: !ostate
+          ,save:     true
         }
       ).error(function(){
         if(ostate){

@@ -44,7 +44,8 @@ class NoteHandler(BaseHandler):
                         note_name=note_name)
 
     def _edit(self, notebook_name, note_name, note_contents=None,
-              confirmed=False, toggle=-1, note_name_rename=None):
+              confirmed=False, toggle=-1, note_name_rename=None,
+              newstate=None):
 
         notebook_enc = self.encode_name(notebook_name)
         note_enc = self.encode_name(note_name)
@@ -72,7 +73,7 @@ class NoteHandler(BaseHandler):
                     if regex is not None:
                         if int(index) == int(toggle):
                             old = regex.group(2)
-                            if old == '[x]':
+                            if newstate is False or newstate is None and old == '[x]':
                                 new = '[ ]'
                             else:
                                 new = '[x]'
@@ -184,9 +185,11 @@ class NoteHandler(BaseHandler):
         if bool(self.get_argument('save', False)):
             note = self.get_argument('note')
             toggle = self.get_argument('toggle', -1)
+            newstate = self.get_argument('newstate', False) == 'true'
             note_name_rename = self.get_argument('note_name_rename', None)
             self._edit(notebook_name=notebook_name, note_name=note_name,
-                       note_contents=note, confirmed=True, toggle=toggle, note_name_rename=note_name_rename)
+                       note_contents=note, confirmed=True, toggle=toggle,
+                       newstate=newstate, note_name_rename=note_name_rename)
         elif bool(self.get_argument('delete', False)):
             self._delete(notebook_name, note_name, confirmed=True)
         else:
