@@ -2,6 +2,7 @@
 from os import path
 from random import choice
 from string import letters, digits
+import logging
 
 from sh import git
 from tornado import autoreload
@@ -76,6 +77,9 @@ def make_app(config=None):
     return server
 
 def main():
+    logging.getLogger("tornado.access").propagate = False
+    logging.getLogger("tornado.access").addHandler(logging.NullHandler())
+
     server = make_app()
     server.listen(options.port, options.address)
     autoreload.start()
