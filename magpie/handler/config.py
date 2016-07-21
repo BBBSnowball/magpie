@@ -8,7 +8,7 @@ from base import BaseHandler
 class ConfigHandler(BaseHandler):
     ALLOWED = {'testing': bool, 'port': int, 'pwdhash': str, 'repo': str,
                'username': str, 'autosave': bool, 'autosave_interval': int,
-               'address': str, 'wysiwyg' : bool, 'theme': str}
+               'address': str, 'wysiwyg' : bool, 'theme': str, 'prefix': str}
     @authenticated
     def get(self):
         themes = {
