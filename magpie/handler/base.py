@@ -9,6 +9,8 @@ class BaseHandler(RequestHandler):
         self.starred_notes = self.get_starred()
         kwargs.update(starred_notes=self.starred_notes)
 
+        kwargs.update(theme=self.settings.theme)
+
         notebook_name = kwargs.get('notebook_name', None)
         if notebook_name is not None:
             kwargs['notes'] = self._notes_list(notebook_name)
@@ -67,13 +69,13 @@ class BaseHandler(RequestHandler):
 
     def _xmlescape(self, value):
         return '&#' + str(ord(value.group())) + ';'
-        
+
 
     def _xmlunescape(self, value):
         return chr(int(value.group(1)))
 
     def decode_name(self, name):
-        return re.sub(r'&#(\d+);', lambda m: self._xmlunescape(m), name) 
+        return re.sub(r'&#(\d+);', lambda m: self._xmlunescape(m), name)
 
     def get_starred(self):
         starred_list = self.get_cookie('starred_notes')

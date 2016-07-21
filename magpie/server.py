@@ -39,6 +39,7 @@ def make_app(config=None):
     define('prefix', default='/', type=str)
     define('autosave_interval', default='5', type=int)
     define('wysiwyg', default=False, type=bool)
+    define('theme', default=None, type=str)
 
     if config is not None:
         # This should only ever be used for testing
@@ -68,6 +69,7 @@ def make_app(config=None):
     server.settings.prefix = options.prefix
     server.settings.autosave_interval = options.autosave_interval
     server.settings.wysiwyg = options.wysiwyg
+    server.settings.theme = options.theme
 
     server.git = git.bake(_cwd=server.settings.repo)
 

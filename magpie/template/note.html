@@ -108,7 +108,7 @@ onload="checkbox_replace(document.getElementById('rendered_note'))";
 
       </div>
     {% end if %}
-    <textarea cols=100 rows=25 name=note id=note tabindex=1{% if wysiwyg %} class="hidden"{% end if %} oninput="setDirty(true);">{{ note_contents }}</textarea>
+    <textarea cols=100 rows=25 name=note id=note class="form-control" tabindex=1{% if wysiwyg %} class="hidden"{% end if %} oninput="setDirty(true);">{{ note_contents }}</textarea>
     {% if autosave and autosave_interval and autosave_interval > 0 %}
         <script>
           var autosave = function(){
