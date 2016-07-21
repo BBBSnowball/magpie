@@ -49,6 +49,7 @@ class NoteHandler(BaseHandler):
         notebook_enc = self.encode_name(notebook_name)
         note_enc = self.encode_name(note_name)
         path = join(self.settings.repo, notebook_enc, note_enc)
+        file_in_git = join(notebook_enc, note_enc)
         if note_name_rename:
             rename_note_enc = self.encode_name(note_name_rename)
             rename_path = join(self.settings.repo, notebook_enc, rename_note_enc)
@@ -64,6 +65,7 @@ class NoteHandler(BaseHandler):
                 f = f = codecs.open(path, "r", "utf-8")
                 tmp = []
                 search_string = r'^(\s*?)(\[.\])\s(.*)$'
+                checkbox_line = ""
                 index = 0
                 for line in f.readlines():
                     regex = search(search_string, line)
@@ -75,11 +77,19 @@ class NoteHandler(BaseHandler):
                             else:
                                 new = '[x]'
                             line = "%s%s %s\n" % \
-                            (regex.group(1), new, regex.group(3))
+                                (regex.group(1), new, regex.group(3))
+                            checkbox_line = line
                         index = index + 1
                     tmp.append(line)
                 f.close()
                 note_contents = ''.join(tmp)
+                message = 'toggling checkbox in %s: %s' % \
+                    (file_in_git, checkbox_line)
+            else:
+                if note_contents == '':
+                    message = 'creating %s' % file_in_git
+                else:
+                    message = 'updating %s' % file_in_git
 
             f = open(path, 'w')
             f.write(note_contents.encode('utf8'))
@@ -87,10 +97,6 @@ class NoteHandler(BaseHandler):
 
             self.application.git.add(path)
             try:
-                if note_contents == '':
-                    message = 'creating %s' % path
-                else:
-                    message = 'updating %s' % path
                 self.application.git.commit('-m', message)
             except ErrorReturnCode_1 as e:
                 if 'nothing to commit' not in e.message:
