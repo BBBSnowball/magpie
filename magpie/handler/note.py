@@ -12,7 +12,7 @@ from tornado.escape import url_escape
 from base import BaseHandler
 
 class NoteHandler(BaseHandler):
-    CHECKBOX_REGEX = r'^(\s*?)(\[.\])\s(.*)$'
+    CHECKBOX_REGEX = r'^(\s*(?:\*\s+)?)(\[[xX ]\])\s(.*)$'
 
     def _star(self, notebook_name, note_name, star, redir=True):
         starred = self.get_starred()
@@ -74,7 +74,7 @@ class NoteHandler(BaseHandler):
                     if regex is not None:
                         if int(index) == int(toggle):
                             old = regex.group(2)
-                            if newstate is False or newstate is None and old == '[x]':
+                            if newstate is False or newstate is None and old != '[ ]':
                                 new = '[ ]'
                             else:
                                 new = '[x]'
