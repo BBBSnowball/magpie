@@ -2,6 +2,7 @@ from os.path import join
 
 import bcrypt
 from tornado.web import authenticated
+from tornado.util import exec_in
 
 from base import BaseHandler
 
@@ -41,7 +42,7 @@ class ConfigHandler(BaseHandler):
                 val = self.get_argument(key, None)
             if key == 'theme' and val is not None:
                 new[key] = str(val)
-            elif val is None or val == '':
+            elif (val is None or val == '') and key in old:
                 new[key] = old[key]
             elif key == 'pwdhash':
                 new[key] = bcrypt.hashpw(val, bcrypt.gensalt())
@@ -53,16 +54,18 @@ class ConfigHandler(BaseHandler):
                 new[key] = bool(val)
         config_file = open(self.settings.config_path.web, 'w')
         for key, val in sorted(new.items()):
-            if self.ALLOWED[key] == str:
-                config_file.write("%s='%s'\n" % (key, val))
-            else:
-                config_file.write("%s=%s\n" % (key, val))
+            config_file.write("%s=%r\n" % (key, val))
         config_file.close()
         self.redirect(self.settings.prefix)
 
     def _fetch_existing_config(self):
-        existing = dict()
-        for config in open(self.settings.config_path.web).readlines():
-            key, val = config.strip().replace(' = ', '=').split('=')
-            existing[key] = val.replace("'", "")
-        return existing
+        # We could use tornado.options.OptionParser, but we would have to
+        # define the options before reading the file. Instead, we use code
+        # that is similar to that in tornado.
+        path = self.settings.config_path.web
+        #NOTE This code is copied from tornado. Therefore, the license of
+        #     tornado applies (Apache License 2.0).
+        config = {}
+        with open(path) as f:
+            exec_in(f.read(), config, config)
+        return config
