@@ -121,9 +121,9 @@ class NoteHandler(BaseHandler):
         else:
             path = join(self.settings.repo, notebook_enc, note_enc)
         note_contents = codecs.open(path, "r", "utf-8").read()
-        note_contents = self._to_markdown(note_contents)
         if highlight is not None:
             note_contents = self.highlight(note_contents, highlight)
+        note_contents = self._to_markdown(note_contents)
         self.render('note.html', notebook_name=notebook_name,
                     note_name=note_name, note_contents=note_contents,
                     edit=False, dot=dot, wysiwyg=self.settings['wysiwyg'])
