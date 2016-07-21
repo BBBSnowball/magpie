@@ -1,6 +1,6 @@
 from base64 import b64encode, b64decode
 from os.path import exists, join
-from re import search
+import re
 import codecs
 
 from magic import Magic
@@ -12,6 +12,8 @@ from tornado.escape import url_escape
 from base import BaseHandler
 
 class NoteHandler(BaseHandler):
+    CHECKBOX_REGEX = r'^(\s*?)(\[.\])\s(.*)$'
+
     def _star(self, notebook_name, note_name, star, redir=True):
         starred = self.get_starred()
         full_name = u'%s/%s' % (notebook_name, note_name)
@@ -65,11 +67,10 @@ class NoteHandler(BaseHandler):
             if toggle > -1:
                 f = f = codecs.open(path, "r", "utf-8")
                 tmp = []
-                search_string = r'^(\s*?)(\[.\])\s(.*)$'
                 checkbox_line = ""
                 index = 0
                 for line in f.readlines():
-                    regex = search(search_string, line)
+                    regex = re.search(self.CHECKBOX_REGEX, line)
                     if regex is not None:
                         if int(index) == int(toggle):
                             old = regex.group(2)
@@ -120,7 +121,7 @@ class NoteHandler(BaseHandler):
         else:
             path = join(self.settings.repo, notebook_enc, note_enc)
         note_contents = codecs.open(path, "r", "utf-8").read()
-        note_contents = markdown(note_contents)
+        note_contents = self._to_markdown(note_contents)
         if highlight is not None:
             note_contents = self.highlight(note_contents, highlight)
         self.render('note.html', notebook_name=notebook_name,
@@ -133,6 +134,21 @@ class NoteHandler(BaseHandler):
             self.set_header("Content-Disposition", "attachment; filename=%s" % \
                             note_name)
             self.write(f.read())
+
+    def _to_markdown(self, text):
+        cnt = [-1]
+        def make_checkbox(m):
+            cnt[0] += 1
+            if m.group(2) != "[ ]":
+                checked = " checked=\"true\""
+            else:
+                checked = ""
+            return ("%s<label for=\"checkbox%d\"><input type=\"checkbox\" id=\"checkbox%d\" "
+                + "onchange=\"toggle(this, %d)\" zindex=\"%d\"%s/>&nbsp;%s</label><br/>") % (
+                m.group(1), cnt[0], cnt[0], cnt[0], cnt[0], checked, m.group(3))
+        text = re.sub(self.CHECKBOX_REGEX, make_checkbox, text, 0, re.MULTILINE)
+
+        return markdown(text)
 
     @authenticated
     def get(self, notebook_name, note_name):
